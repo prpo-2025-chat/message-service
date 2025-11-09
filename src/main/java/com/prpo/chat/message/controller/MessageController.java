@@ -1,19 +1,24 @@
 package com.prpo.chat.message.controller;
 
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
 
-import com.prpo.chat.message.MessageRequest;
-import com.prpo.chat.message.MessageResponse;
+import com.prpo.chat.message.Message;
+import com.prpo.chat.message.MessageRepository;
+
+import java.util.*;
 
 
 @RestController
 @RequestMapping("/message")
 public class MessageController {
+
+    private final MessageRepository repo;
+
+    public MessageController(MessageRepository repo) { this.repo = repo; }
     
     @GetMapping
-    public String getAllMessages() {
-        return "This are all available messages";
+    public List<Message> getAllMessages() {
+        return this.repo.findAll();
     }
 
     @GetMapping("/{id}")
@@ -22,15 +27,14 @@ public class MessageController {
     }
 
     @PostMapping
-    public MessageResponse postMessage(@RequestBody MessageRequest body) {
+    public Message sendMessage(@RequestBody Message body) {
         String id = UUID.randomUUID().toString();
-        return new MessageResponse(
-            id,
-            body.senderId(),
-            body.recieverId(),
-            body.message(),
-            "Ok -> 200"
-        );
+        Message message = body;
+        message.setId(id);
+        message.setDateSent(new Date());
+        this.repo.save(message);
+        return message;
+
     }
 
     @DeleteMapping("/{id}")

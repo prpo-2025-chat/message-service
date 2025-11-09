@@ -3,3 +3,8 @@ server:
 spring:
   application:
     name: message-service
+
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}?retryWrites=true&w=majority&appName=chat-app
+
