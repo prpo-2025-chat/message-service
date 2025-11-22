@@ -1,6 +1,6 @@
-package com.prpo.chat.message;
+package com.prpo.chat.message.dto;
 
-import java.util.*;
+import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

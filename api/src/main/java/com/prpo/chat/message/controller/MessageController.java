@@ -1,24 +1,28 @@
 package com.prpo.chat.message.controller;
 
-import org.springframework.web.bind.annotation.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.prpo.chat.message.Message;
-import com.prpo.chat.message.MessageRepository;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import com.prpo.chat.message.dto.Message;
 
 
 @RestController
 @RequestMapping("/message")
 public class MessageController {
-
-    private final MessageRepository repo;
-
-    public MessageController(MessageRepository repo) { this.repo = repo; }
     
     @GetMapping
     public List<Message> getAllMessages() {
-        return this.repo.findAll();
+        return null;
     }
 
     @GetMapping("/{id}")
@@ -32,7 +36,6 @@ public class MessageController {
         Message message = body;
         message.setId(id);
         message.setDateSent(new Date());
-        this.repo.save(message);
         return message;
 
     }
