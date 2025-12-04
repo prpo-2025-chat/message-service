@@ -3,40 +3,45 @@ package com.prpo.chat.message.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
+import com.prpo.chat.message.client.EncryptionClient;
+import com.prpo.chat.message.client.NotificationClient;
+import com.prpo.chat.message.client.dto.MessageReceivedNotificationRequest;
 import com.prpo.chat.message.entity.Message;
 import com.prpo.chat.message.repository.MessageRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
     private final MessageRepository repo;
-    private final WebClient encryptionWebClient;
+    private final EncryptionClient encryptionClient;
+    private final NotificationClient notificationClient;
 
-    public MessageService(MessageRepository repo, WebClient encryptionWebClient) {
-        this.repo = repo;
-        this.encryptionWebClient = encryptionWebClient;
-    }
-
-    public Message sendMessage(@NonNull String senderId, @NonNull String receiverId, @NonNull String content) {
-        String encryptedContent = encryptContent(content);
-        Message m = new Message(senderId, receiverId, encryptedContent);
+    public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
+        String encryptedContent = encryptionClient.encrypt(content);
+        Message m = new Message(senderId, channelId, encryptedContent);
+        MessageReceivedNotificationRequest notificationRequest = new MessageReceivedNotificationRequest();
+        notificationRequest.setMessageId(m.getId());
+        notificationRequest.setSenderId(senderId);
+        notificationRequest.setChannelId(channelId);
+        notificationRequest.setText(firstThreeWords(content));
+        notificationClient.notifyMessageReceived(notificationRequest);
         return repo.save(m);
     }
 
     public Message editMessage(@NonNull Message message) {
         String plainContent = message.getContent();
         if (plainContent != null) {
-            message.setContent(encryptContent(plainContent));
+            message.setContent(encryptionClient.encrypt(plainContent));
         }
         return repo.save(message);
     }
@@ -54,7 +59,7 @@ public class MessageService {
             throw new IllegalStateException("Null content");
         }
 
-        List<String> decryptedContent = decryptContentBatch(encryptedContent);
+        List<String> decryptedContent = encryptionClient.decryptBatch(encryptedContent);
 
         if (decryptedContent.size() != messages.size()) {
             throw new IllegalStateException(
@@ -85,7 +90,7 @@ public class MessageService {
         Message m = repo.findById(id).orElseThrow();
         String encryptedContent = m.getContent();
         if (encryptedContent != null) {
-            String decryptedContent = decryptContent(encryptedContent);
+            String decryptedContent = encryptionClient.decrypt(encryptedContent);
             m.setContent(decryptedContent);
         }
         return m;
@@ -104,32 +109,18 @@ public class MessageService {
         return repo.findByChannelIdInAndReadByNotContaining(channelIdsForUserId, userId);
     }
 
-    private String encryptContent(@NonNull String plainText) {
-        return encryptionWebClient.post()
-            .uri("")
-            .bodyValue(plainText)
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+    public static String firstThreeWords(String input) {
+        if (input == null || input.isBlank()) return input;
+
+        String[] parts = input.trim().split("\\s+");
+        int limit = Math.min(3, parts.length);
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < limit; i++) {
+            if (i > 0) result.append(" ");
+            result.append(parts[i]);
+        }
+        return result.toString();
     }
 
-    private String decryptContent(@NonNull String content) {
-        return encryptionWebClient.post()
-            .uri("/decryption")
-            .bodyValue(content)
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
-    }
-
-    private List<String> decryptContentBatch(@NonNull List<String> content) {
-        return encryptionWebClient.post()
-            .uri("/decryption/batch")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .bodyValue(content)
-            .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
-            .block();
-    }
 }

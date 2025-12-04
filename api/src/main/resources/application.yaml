@@ -10,3 +10,7 @@ spring:
 
 encryption-service:
   base-url: http://localhost:8082/encryption
+
+notification:
+  service:
+    base-url: http://localhost:8085/notification
