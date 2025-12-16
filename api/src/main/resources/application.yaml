@@ -8,9 +8,20 @@ spring:
     mongodb:
       uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}?retryWrites=true&w=majority&appName=chat-app
 
-encryption-service:
-  base-url: http://localhost:8082/encryption
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+encryption:
+  service:
+    base-url: http://localhost:8082/encryption
 
 notification:
   service:
     base-url: http://localhost:8085/notification
+
+presence: 
+  service:
+    base-url: http://localhost:8081/presence

@@ -23,7 +23,7 @@ public class EncryptionClient {
 
     /**
      * Encrypt a single string using:
-     * POST /encryption with String body → String response
+     * POST with String body → String response
      */
     public String encrypt(String plainText) {
         try {
@@ -37,7 +37,7 @@ public class EncryptionClient {
 
     /**
      * Decrypt a single string using:
-     * POST /encryption/decryption with String body → String response
+     * POST /decryption with String body → String response
      */
     public String decrypt(String cipherText) {
         try {
@@ -50,7 +50,7 @@ public class EncryptionClient {
 
     /**
      * Decrypt multiple ciphertexts using:
-     * POST /encryption/decryption/batch with List<String> body → List<String> response
+     * POST /decryption/batch with List<String> body → List<String> response
      */
     public List<String> decryptBatch(List<String> ciphertexts) {
         try {

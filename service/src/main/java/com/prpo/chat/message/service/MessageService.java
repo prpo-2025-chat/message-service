@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.prpo.chat.message.client.EncryptionClient;
 import com.prpo.chat.message.client.NotificationClient;
+import com.prpo.chat.message.client.PresenceClient;
 import com.prpo.chat.message.client.dto.MessageReceivedNotificationRequest;
 import com.prpo.chat.message.entity.Message;
 import com.prpo.chat.message.repository.MessageRepository;
@@ -25,6 +26,7 @@ public class MessageService {
     private final MessageRepository repo;
     private final EncryptionClient encryptionClient;
     private final NotificationClient notificationClient;
+    private final PresenceClient presenceClient;
 
     public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
         String encryptedContent = encryptionClient.encrypt(content);
@@ -35,6 +37,7 @@ public class MessageService {
         notificationRequest.setChannelId(channelId);
         notificationRequest.setText(firstThreeWords(content));
         notificationClient.notifyMessageReceived(notificationRequest);
+        presenceClient.setUserOnline(senderId);
         return repo.save(m);
     }
 
