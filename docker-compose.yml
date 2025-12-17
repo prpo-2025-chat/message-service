@@ -1,0 +1,21 @@
+services:
+  message:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_CLUSTER: ${MONGO_CLUSTER}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+
+      ENCRYPTION_SERVICE_BASE_URL: http://encryption:8082/encryption
+      NOTIFICATION_SERVICE_BASE_URL: http://notification:8085/notification
+      PRESENCE_SERVICE_BASE_URL: http://presence:8081/presence
+    networks:
+      - chat-net
+
+networks:
+  chat-net:
+    external: true
+

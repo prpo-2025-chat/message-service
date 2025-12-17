@@ -16,12 +16,12 @@ springdoc:
 
 encryption:
   service:
-    base-url: http://localhost:8082/encryption
+    base-url: ${ENCRYPTION_SERVICE_BASE_URL:http://localhost:8082/encryption}
 
 notification:
   service:
-    base-url: http://localhost:8085/notification
+    base-url: ${NOTIFICATION_SERVICE_BASE_URL:http://localhost:8085/notification}
 
-presence: 
+presence:
   service:
-    base-url: http://localhost:8081/presence
+    base-url: ${PRESENCE_SERVICE_BASE_URL:http://localhost:8081/presence}
