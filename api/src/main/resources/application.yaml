@@ -20,7 +20,7 @@ encryption:
 
 notification:
   service:
-    base-url: ${NOTIFICATION_SERVICE_BASE_URL:http://localhost:8085/notification}
+    base-url: ${NOTIFICATION_SERVICE_BASE_URL:http://localhost:8085}
 
 presence:
   service:

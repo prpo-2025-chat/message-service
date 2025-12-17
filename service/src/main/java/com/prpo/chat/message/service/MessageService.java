@@ -31,14 +31,20 @@ public class MessageService {
     public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
         String encryptedContent = encryptionClient.encrypt(content);
         Message m = new Message(senderId, channelId, encryptedContent);
+
+        Message saved = repo.save(m);
+
         MessageReceivedNotificationRequest notificationRequest = new MessageReceivedNotificationRequest();
-        notificationRequest.setMessageId(m.getId());
+        notificationRequest.setMessageId(saved.getId());
         notificationRequest.setSenderId(senderId);
         notificationRequest.setChannelId(channelId);
         notificationRequest.setText(firstThreeWords(content));
+
         notificationClient.notifyMessageReceived(notificationRequest);
+
         presenceClient.setUserOnline(senderId);
-        return repo.save(m);
+        
+        return saved;
     }
 
     public Message editMessage(@NonNull Message message) {
