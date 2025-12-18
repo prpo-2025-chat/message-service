@@ -30,7 +30,7 @@ public class MessageService {
 
     public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
         String encryptedContent = encryptionClient.encrypt(content);
-        Message m = new Message(senderId, channelId, encryptedContent);
+        Message m = new Message(channelId, senderId, encryptedContent);
 
         Message saved = repo.save(m);
 
