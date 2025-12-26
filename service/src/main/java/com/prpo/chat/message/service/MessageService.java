@@ -43,6 +43,8 @@ public class MessageService {
         notificationClient.notifyMessageReceived(notificationRequest);
 
         presenceClient.setUserOnline(senderId);
+
+        saved.setContent(content);
         
         return saved;
     }
