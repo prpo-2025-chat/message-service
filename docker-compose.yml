@@ -10,6 +10,7 @@ services:
       ENCRYPTION_SERVICE_BASE_URL: http://encryption:8082/encryption
       NOTIFICATION_SERVICE_BASE_URL: http://notification:8085
       PRESENCE_SERVICE_BASE_URL: http://presence:8081/presence
+      SEARCH_SERVICE_BASE_URL: http://search:8084/search
     networks:
       - chat-net
     depends_on:

@@ -31,3 +31,7 @@ notification:
 presence:
   service:
     base-url: ${PRESENCE_SERVICE_BASE_URL:http://localhost:8081/presence}
+
+search:
+  service:
+    base-url: ${SEARCH_SERVICE_BASE_URL:http://localhost:8084/search}

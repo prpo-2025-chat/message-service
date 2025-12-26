@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import com.prpo.chat.message.client.EncryptionClient;
 import com.prpo.chat.message.client.NotificationClient;
 import com.prpo.chat.message.client.PresenceClient;
+import com.prpo.chat.message.client.SearchClient;
+import com.prpo.chat.message.client.dto.IndexMessageRequestDto;
 import com.prpo.chat.message.client.dto.MessageReceivedNotificationRequest;
 import com.prpo.chat.message.entity.Message;
 import com.prpo.chat.message.repository.MessageRepository;
@@ -27,6 +29,7 @@ public class MessageService {
     private final EncryptionClient encryptionClient;
     private final NotificationClient notificationClient;
     private final PresenceClient presenceClient;
+    private final SearchClient searchClient;
 
     public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
         String encryptedContent = encryptionClient.encrypt(content);
@@ -43,6 +46,15 @@ public class MessageService {
         notificationClient.notifyMessageReceived(notificationRequest);
 
         presenceClient.setUserOnline(senderId);
+
+        IndexMessageRequestDto indexMessageDto = new IndexMessageRequestDto();
+        indexMessageDto.setMessageId(saved.getId());
+        indexMessageDto.setChannelId(channelId);
+        indexMessageDto.setSenderId(senderId);
+        indexMessageDto.setText(encryptedContent);
+        indexMessageDto.setDateSent(saved.getDateSent());
+
+        searchClient.indexMessage(indexMessageDto);
 
         saved.setContent(content);
         

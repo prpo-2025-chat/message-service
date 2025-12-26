@@ -5,23 +5,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.prpo.chat.message.client.dto.IndexMessageRequestDto;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PresenceClient {
+public class SearchClient {
 
     private final RestTemplate restTemplate;
 
-    @Value("${presence.service.base-url}")
+    @Value("${search.service.base-url}")
     private String baseUrl;
 
-    public void setUserOnline(String userId) {
+    public void indexMessage(IndexMessageRequestDto indexMessage) {
         try {
-            String url = baseUrl + "/{userId}/online";
-            restTemplate.put(url, null, userId);
+            String url = baseUrl + "/index/message";
+            restTemplate.postForLocation(url, indexMessage);
         } catch (RestClientException e) {
-            throw new RuntimeException("Failed to notify presence service", e);
+            throw new RuntimeException("Failed to send message to search service", e);
         }
     }
 }
