@@ -2,6 +2,7 @@ package com.prpo.chat.message.entity;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -35,6 +36,8 @@ public class Message {
   @CreatedDate 
   private Date dateSent;
 
+  private List<MediaAttachment> media;
+
   public Message() {}
   public Message(String channelId, String senderId, String content) {
     this.channelId = channelId;
@@ -42,6 +45,7 @@ public class Message {
     this.content = content;
     this.status = MessageStatus.SENT;
     this.readBy = new HashSet<>(Set.of(senderId));
+    this.media = List.of();
   }
   public Message(
     String id, 
@@ -59,6 +63,7 @@ public class Message {
     this.status = status;
     this.readBy = readBy;
     this.dateSent = dateSent;
+    this.media = List.of();
   }
 
   public String getId() { return id; }
@@ -68,6 +73,7 @@ public class Message {
   public Date getDateSent() { return dateSent; }
   public MessageStatus getStatus() { return status; }
   public Set<String> getReadBy() { return readBy; }
+  public List<MediaAttachment> getMedia() { return media; }
 
   public void setId(String id) { this.id = id; }
   public void setChannelId(String v) { this.channelId = v; }
@@ -76,5 +82,6 @@ public class Message {
   public void setDateSent(Date v) { this.dateSent = v; }
   public void setStatus(MessageStatus v) { this.status = v; }
   public void setReadBy(Set<String> v) { this.readBy = v; }
+  public void setMedia(List<MediaAttachment> v) { this.media = v; }
 }
 

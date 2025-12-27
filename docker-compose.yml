@@ -11,6 +11,7 @@ services:
       NOTIFICATION_SERVICE_BASE_URL: http://notification:8085
       PRESENCE_SERVICE_BASE_URL: http://presence:8081/presence
       SEARCH_SERVICE_BASE_URL: http://search:8084/search
+      MEDIA_SERVICE_BASE_URL: http://media:8083/media
     networks:
       - chat-net
     depends_on:

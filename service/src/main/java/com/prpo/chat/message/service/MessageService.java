@@ -1,5 +1,6 @@
 package com.prpo.chat.message.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +10,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.prpo.chat.message.client.EncryptionClient;
+import com.prpo.chat.message.client.MediaClient;
 import com.prpo.chat.message.client.NotificationClient;
 import com.prpo.chat.message.client.PresenceClient;
 import com.prpo.chat.message.client.SearchClient;
 import com.prpo.chat.message.client.dto.IndexMessageRequestDto;
 import com.prpo.chat.message.client.dto.MessageReceivedNotificationRequest;
+import com.prpo.chat.message.entity.MediaAttachment;
 import com.prpo.chat.message.entity.Message;
 import com.prpo.chat.message.repository.MessageRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,10 +33,13 @@ public class MessageService {
     private final NotificationClient notificationClient;
     private final PresenceClient presenceClient;
     private final SearchClient searchClient;
+    private final MediaClient mediaClient;
 
-    public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content) {
+    public Message sendMessage(@NonNull String senderId, @NonNull String channelId, @NonNull String content, List<MultipartFile> files) {
+
         String encryptedContent = encryptionClient.encrypt(content);
         Message m = new Message(channelId, senderId, encryptedContent);
+        m.setMedia(uploadFiles(files, senderId));
 
         Message saved = repo.save(m);
 
@@ -57,7 +63,8 @@ public class MessageService {
         searchClient.indexMessage(indexMessageDto);
 
         saved.setContent(content);
-        
+        saved.setMedia(m.getMedia());
+
         return saved;
     }
 
@@ -144,6 +151,45 @@ public class MessageService {
             result.append(parts[i]);
         }
         return result.toString();
+    }
+
+    private List<MediaAttachment> uploadFiles(List<MultipartFile> files, String uploaderId) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+
+        List<MediaAttachment> uploaded = new ArrayList<>(files.size());
+        for (MultipartFile file : files) {
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
+            try {
+                MediaAttachment media = mediaClient.upload(
+                    file.getBytes(),
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    uploaderId,
+                    resolveMediaType(file.getContentType())
+                );
+                if (media != null) {
+                    uploaded.add(media);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read file content for upload", e);
+            }
+        }
+        return uploaded;
+    }
+
+    private String resolveMediaType(String contentType) {
+        if (contentType == null) {
+            return "DOCUMENT";
+        }
+        String lower = contentType.toLowerCase();
+        if (lower.startsWith("image/")) return "IMAGE";
+        if (lower.startsWith("video/")) return "VIDEO";
+        if (lower.startsWith("audio/")) return "AUDIO";
+        return "DOCUMENT";
     }
 
 }

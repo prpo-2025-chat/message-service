@@ -3,6 +3,7 @@ package com.prpo.chat.message.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.prpo.chat.message.dto.MessageDto;
 import com.prpo.chat.message.entity.Message;
@@ -108,15 +111,30 @@ public class MessageController {
         @ApiResponse(responseCode = "200", description = "Message sent successfully"),
         @ApiResponse(responseCode = "400", description = "Invalid message payload")
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Message sendMessage(
+        @Parameter(description = "Message payload", required = true)
+        @Valid @RequestPart("payload") MessageDto body,
+        @RequestPart(name = "files", required = false) List<MultipartFile> files
+    ) {
+        return messageService.sendMessage(
+            body.getSenderId(),
+            body.getChannelId(),
+            body.getContent(),
+            files
+        );
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Message sendMessageJson(
         @Parameter(description = "Message payload", required = true)
         @Valid @RequestBody MessageDto body
     ) {
         return messageService.sendMessage(
             body.getSenderId(),
             body.getChannelId(),
-            body.getContent()
+            body.getContent(),
+            List.of()
         );
     }
 
@@ -164,6 +182,7 @@ public class MessageController {
             m.getReadBy(),
             m.getDateSent()
         );
+        message.setMedia(m.getMedia());
         return messageService.editMessage(message);
     }
 }

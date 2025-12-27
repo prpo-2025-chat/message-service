@@ -1,8 +1,10 @@
 package com.prpo.chat.message.dto;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
+import com.prpo.chat.message.entity.MediaAttachment;
 import com.prpo.chat.message.entity.MessageStatus;
 
 import jakarta.validation.constraints.NotBlank;
@@ -26,11 +28,13 @@ public class MessageDto {
     
     private Date dateSent;
 
+    private List<MediaAttachment> media;
+
     public MessageDto() {
     }
 
     public MessageDto(String id, String channelId, String senderId, String content,
-                      MessageStatus status, Set<String> readBy, Date dateSent) {
+                      MessageStatus status, Set<String> readBy, Date dateSent, List<MediaAttachment> media) {
         this.id = id;
         this.channelId = channelId;
         this.senderId = senderId;
@@ -38,6 +42,7 @@ public class MessageDto {
         this.status = status;
         this.readBy = readBy;
         this.dateSent = dateSent;
+        this.media = media;
     }
 
     public String getId() {
@@ -68,6 +73,10 @@ public class MessageDto {
         return dateSent;
     }
 
+    public List<MediaAttachment> getMedia() {
+        return media;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -94,5 +103,9 @@ public class MessageDto {
 
     public void setDateSent(Date dateSent) {
         this.dateSent = dateSent;
+    }
+
+    public void setMedia(List<MediaAttachment> media) {
+        this.media = media;
     }
 }

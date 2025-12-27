@@ -35,3 +35,7 @@ presence:
 search:
   service:
     base-url: ${SEARCH_SERVICE_BASE_URL:http://localhost:8084/search}
+
+media:
+  service:
+    base-url: ${MEDIA_SERVICE_BASE_URL:http://localhost:8083/media}

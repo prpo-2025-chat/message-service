@@ -1,0 +1,3 @@
+media:
+  service:
+    base-url: http://localhost:8083/media
