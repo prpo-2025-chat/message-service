@@ -6,14 +6,22 @@ import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("messages")
+@CompoundIndexes({
+  @CompoundIndex(name = "channel_date_idx", def = "{'channelId': 1, 'dateSent': -1}"),
+  @CompoundIndex(name = "channel_id_idx", def = "{'channelId': 1, '_id': 1}")
+})
 public class Message {
 
   @Id 
   private String id;
 
+  @Indexed
   private String channelId;
 
   private String senderId;
