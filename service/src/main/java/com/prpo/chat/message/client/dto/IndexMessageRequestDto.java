@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IndexMessageRequestDto {
-    private String messageId;
+    private String id;
     private String senderId;
     private String channelId;
-    private String text;
+    private String content;
     private Date dateSent;
 }

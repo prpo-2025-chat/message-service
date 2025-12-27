@@ -48,10 +48,10 @@ public class MessageService {
         presenceClient.setUserOnline(senderId);
 
         IndexMessageRequestDto indexMessageDto = new IndexMessageRequestDto();
-        indexMessageDto.setMessageId(saved.getId());
+        indexMessageDto.setId(saved.getId());
         indexMessageDto.setChannelId(channelId);
         indexMessageDto.setSenderId(senderId);
-        indexMessageDto.setText(encryptedContent);
+        indexMessageDto.setContent(encryptedContent);
         indexMessageDto.setDateSent(saved.getDateSent());
 
         searchClient.indexMessage(indexMessageDto);
