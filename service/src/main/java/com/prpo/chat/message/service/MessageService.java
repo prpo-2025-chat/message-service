@@ -57,7 +57,7 @@ public class MessageService {
         indexMessageDto.setId(saved.getId());
         indexMessageDto.setChannelId(channelId);
         indexMessageDto.setSenderId(senderId);
-        indexMessageDto.setContent(encryptedContent);
+        indexMessageDto.setContent(content);
         indexMessageDto.setDateSent(saved.getDateSent());
 
         searchClient.indexMessage(indexMessageDto);
