@@ -19,6 +19,24 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "http://localhost:4200"
+        allowed-methods: "GET"
+        allowed-headers: "*"
+        allow-credentials: false
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
 
 encryption:
   service:
