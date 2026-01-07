@@ -12,7 +12,11 @@ COPY service/pom.xml /app/service/pom.xml
 COPY entity/pom.xml /app/entity/pom.xml
 
 # Download dependencies (cached unless pom files change)
-RUN mvn -q -DskipTests dependency:go-offline
+RUN mvn -q -DskipTests dependency:go-offline \
+  -Dmaven.wagon.http.retryHandler.count=5 \
+  -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
+  -Dmaven.wagon.http.timeout=60000 \
+  -Dmaven.wagon.http.pool=false
 
 # Now copy the actual source code
 COPY . /app
