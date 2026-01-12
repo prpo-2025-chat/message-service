@@ -21,8 +21,9 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/api/target/*.jar /app/app.jar
 
+ENV ENCRYPTION_SERVICE_BASE_URL=http://encryption:8082/encryption NOTIFICATION_SERVICE_BASE_URL=http://notification:8085 PRESENCE_SERVICE_BASE_URL=http://presence:8081/presence SEARCH_SERVICE_BASE_URL=http://search:8084/search MEDIA_SERVICE_BASE_URL=http://media:8083/media
+
 EXPOSE 8080
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -fsS http://localhost:8080/health || exit 1
 
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
