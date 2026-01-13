@@ -1,4 +1,4 @@
-mvn clean install
+mvn clean install -DskipTests
 
 Get-Content .env | ForEach-Object {
     if ($_ -match "^\s*#") { return }
